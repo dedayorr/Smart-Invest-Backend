@@ -3,12 +3,13 @@ const app = express();
 const dbConnect = require("./config/db");
 require("dotenv").config();
 const cors = require("cors");
-const { signUp } = require("./controllers/smartHub");
+const { signUp, signIn } = require("./controllers/smartHub");
 
 app.use(express.json());
 app.use(cors());
 
 app.post("/create", signUp);
+app.post("/create", signIn);
 
 port = process.env.PORT || 8008;
 
