@@ -1,5 +1,5 @@
 const { User } = require("../models/smartHubSchema");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const signUp = async (req, res) => {
   try {
@@ -7,6 +7,13 @@ const signUp = async (req, res) => {
     if (!fullname || !email || !password) {
       throw new Error("All field is required");
     }
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      throw new Error("Email is already registered");
+    }
+
     const newSignup = await User.create({
       fullname,
       email,
@@ -24,19 +31,14 @@ const signIn = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!email) {
-      return res.status(401).json({ error: "Invalid username or password." });
+      return res.status(401).json({ error: "Invalid email or password." });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-    
-    if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid username or password." });
-    }
 
-    const newSignup = await User.create({
-      email,
-      password,
-    });
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
 
     // res.status(200).json(newSignup);
     res.status(200).json({ message: "Login successful.", user: user });

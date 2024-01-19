@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 app.post("/create", signUp);
-app.post("/create", signIn);
+app.post("/login", signIn);
 
 port = process.env.PORT || 8008;
 
